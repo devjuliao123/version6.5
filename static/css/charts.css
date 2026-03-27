@@ -1,0 +1,80 @@
+/* ============================== */
+/* CHARTS SECTION                 */
+/* ============================== */
+.charts-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+    gap: 1.25rem;
+    margin-top: 1rem;
+}
+
+.chart-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--border-radius);
+    padding: 1.25rem 1rem 1rem 1rem;
+    min-height: 280px;
+    max-height: 320px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: var(--shadow);
+    transition: all var(--transition-normal);
+    overflow: hidden;
+}
+
+.chart-box:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.chart-box h3 {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text);
+    margin: 0 0 0.75rem 0;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.chart-box h3 .material-icons {
+    color: var(--primary);
+    font-size: 18px;
+}
+
+.chart-container {
+    flex: 1;
+    position: relative;
+    min-height: 200px;
+    max-height: 240px;
+    width: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 0 4px;
+}
+
+.chart-container canvas {
+    max-width: 100%;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 180px;
+}
+
+.etl-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+    gap: 1.25rem;
+    margin-top: 0.5rem;
+}
+
+.etl-box {
+    border-top: 3px solid var(--etl);
+}
+
+.etl-box h3 .material-icons {
+    color: var(--etl);
+}

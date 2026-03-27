@@ -1,0 +1,232 @@
+/* ============================== */
+/* TABLE SECTION                  */
+/* ============================== */
+.table-section {
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    height: auto;
+}
+
+.table-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 1.5rem 0.5rem 1.5rem;
+    gap: 1rem;
+}
+
+.table-header-main {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.table-header h2 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text);
+    margin: 0;
+    opacity: 1; /* Garantir visibilidade no dark mode */
+}
+
+.table-subtitle {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.active-filters-info {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    font-style: italic;
+    opacity: 0.8;
+}
+
+.table-counter {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    background: var(--bg);
+    padding: 6px 16px;
+    border-radius: var(--border-radius);
+    white-space: nowrap;
+    font-weight: 600;
+}
+
+.table-container {
+    max-height: 500px;
+    overflow-y: auto;
+    overflow-x: auto;
+    margin: 0 1.5rem 1rem 1.5rem;
+    border-radius: var(--border-radius-sm);
+    border: 1px solid var(--border);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 1100px;
+    table-layout: fixed;
+}
+
+thead {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+th {
+    background: #f8fafc; /* Distinct light blue-gray background */
+    color: var(--text);
+    font-weight: 700;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 1rem 0.75rem;
+    text-align: left;
+    border-top: 1px solid var(--border);
+    border-bottom: 2px solid var(--primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    position: sticky;
+    top: 0;
+    z-index: 20;
+}
+
+/* Colunas fixas para manter o gridview organizado */
+th:nth-child(1), td:nth-child(1) { width: 80px; }  /* Org */
+th:nth-child(2), td:nth-child(2) { width: auto; }   /* Descrição Filial */
+th:nth-child(3), td:nth-child(3) { width: 120px; } /* Modalidade */
+th:nth-child(4), td:nth-child(4) { width: 120px; } /* Marca */
+th:nth-child(5), td:nth-child(5) { width: 180px; } /* Sistema - Reduzido conforme pedido */
+th:nth-child(6), td:nth-child(6) { width: 120px; } /* Valor */
+th:nth-child(7), td:nth-child(7) { width: 80px; }  /* Status */
+th:nth-child(8), td:nth-child(8) { width: 100px; } /* Detalhes */
+
+td {
+    padding: 0.75rem;
+    color: var(--text);
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+tbody tr {
+    transition: background-color var(--transition-fast);
+}
+
+tbody tr:hover td {
+    background-color: rgba(14, 165, 233, 0.05);
+}
+
+td:last-child div {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 32px;
+}
+
+.table-footer {
+    padding: 1rem 1.5rem 1.5rem 1.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-top: 1px solid var(--border);
+    gap: 1rem;
+}
+
+.pagination-info {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+/* Removed redundant styles as they are now standardized in components.css */
+
+.no-more-data {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+/* ============================== */
+/* BADGES & MARCAS                */
+/* ============================== */
+.badge.website { color: var(--website-orange) !important; border-color: rgba(249, 115, 22, 0.3); background: rgba(249, 115, 22, 0.05); }
+.badge.cloud { color: var(--cloud-blue) !important; border-color: rgba(14, 165, 233, 0.3); background: rgba(14, 165, 233, 0.05); }
+.badge.fiscal-contabil { color: var(--fisco-blue) !important; border-color: rgba(59, 130, 246, 0.3); background: rgba(59, 130, 246, 0.05); }
+.badge.zapcrm { color: var(--zapcrm-green) !important; border-color: rgba(34, 197, 94, 0.3); background: rgba(34, 197, 94, 0.05); }
+.badge.webpav { color: var(--website-orange) !important; border-color: rgba(240, 122, 43, 0.3); background: rgba(240, 122, 43, 0.05); }
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 8px;
+    border-radius: 40px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    background: var(--bg);
+    color: var(--text);
+    border: 1px solid var(--border);
+    white-space: nowrap;
+    line-height: 1;
+    transition: all 0.2s ease;
+}
+
+.badge .material-icons {
+    font-size: 14px;
+}
+
+.badge-success {
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--success);
+    border-color: rgba(16, 185, 129, 0.2);
+}
+
+.badge-etl {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--etl), #a78bfa);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 40px;
+    font-size: 0.65rem;
+    font-weight: 600;
+    box-shadow: 0 2px 4px rgba(139, 92, 246, 0.3);
+    height: 24px;
+    white-space: nowrap;
+}
+
+.info-icon {
+    font-size: 20px;
+    color: var(--primary);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    transition: transform var(--transition-fast);
+}
+
+.info-icon:hover {
+    transform: scale(1.1);
+}
+
+@media (max-width: 768px) {
+    .table-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .table-counter {
+        align-self: flex-end;
+    }
+}
+/* Dark Mode adjustment for table header */
+body.dark th {
+    background: #1e293b; /* Matches surface color but solid */
+}

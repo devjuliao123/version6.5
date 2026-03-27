@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <!-- Meta Tags Essenciais -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Gestor de Implantações - Dashboard de análise de implantações e ETL">
+    <meta name="theme-color" content="#0ea5e9">
+    
+    <!-- Performance: DNS Prefetch e Preconnect -->
+    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- CSS Modular -->
+    <link rel="stylesheet" href="/static/css/main.css">
+    <link rel="stylesheet" href="/static/css/components.css">
+    <link rel="stylesheet" href="/static/css/kpi.css">
+    <link rel="stylesheet" href="/static/css/table.css">
+    <link rel="stylesheet" href="/static/css/charts.css">
+    <link rel="stylesheet" href="/static/css/modals.css">
+    <link rel="stylesheet" href="/static/css/notification.css">
+    <link rel="stylesheet" href="/static/css/responsive.css">
+    
+    <title>Gestor de Implantações | Dashboard</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/static/cloud.ico">
+</head>
+<body>    
+    <header class="dashboard-header glass">
+        <div class="header-left">
+            <button id="menuToggle" class="action-btn menu-toggle" title="Filtros e Menu">
+                <span class="material-icons">menu</span>
+                <span class="btn-text">Menu</span>
+            </button>
+            <div class="header-logo">
+                <span class="material-icons">cloud</span>
+                <h1>Gestor de Implantações</h1>
+            </div>
+        </div>
+
+        <div class="header-right">
+            <button id="refreshBtn" class="action-btn" title="Recarregar dados (Ctrl+R)">
+                <span class="material-icons">refresh</span>
+                <span>Recarregar</span>
+            </button>
+
+            <div class="user-menu-container">
+                <button id="userMenuBtn" class="action-btn user-btn">
+                    <span class="material-icons">account_circle</span>
+                    <span id="userName">Carregando...</span>
+                </button>
+                <div id="userDropdown" class="user-dropdown glass">
+                    <div class="dropdown-header">
+                        <span class="material-icons">account_circle</span>
+                        <div class="user-details">
+                            <span id="dropdownUserName" class="user-name">Usuário</span>
+                            <span id="userRole" class="user-role">Cargo</span>
+                        </div>
+                    </div>
+                    <div class="dropdown-divider"></div>
+                    <div class="dropdown-item theme-item">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <span id="themeIcon" class="material-icons">light_mode</span>
+                            <span>Tema</span>
+                        </div>
+                        <div class="theme-switch-wrapper-dashboard">
+                            <label class="theme-switch" for="themeCheckbox">
+                                <input type="checkbox" id="themeCheckbox" />
+                                <div class="slider round"></div>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="dropdown-divider"></div>
+                    <button id="logoutBtn" class="dropdown-item logout-item">
+                        <span class="material-icons">logout</span>
+                        Sair
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="filters-container" id="filtersContainer">
+        <div class="sidebar-top">
+            <div class="sidebar-logo">
+                <span class="material-icons">cloud</span>
+                <span>Filtros</span>
+            </div>
+            <button id="closeSidebarBtn" class="close-sidebar-btn">
+                <span class="material-icons">close</span>
+            </button>
+        </div>
+
+        <div class="filters-grid">
+            <div class="filter-group" data-label="Organização">
+                <div class="filter-input-wrapper">
+                    <span class="material-icons filter-icon">business</span>
+                    <input type="text" id="orgInput" placeholder="Org (código ou nome)" class="filter-input">
+                </div>
+            </div>
+
+            <div class="filter-group" data-label="Filial">
+                <div class="filter-input-wrapper">
+                    <span class="material-icons filter-icon">store</span>
+                    <input type="text" id="filialInput" placeholder="Filial (código ou nome)" class="filter-input">
+                </div>
+            </div>
+
+            <div class="filter-group" data-label="Sistema">
+                <div class="filter-input-wrapper">
+                    <span class="material-icons filter-icon">computer</span>
+                    <input type="text" id="sistemaInput" placeholder="Sistema" class="filter-input">
+                </div>
+            </div>
+
+            <div class="filter-group date-group" data-label="Período da Implantação">
+                <div class="date-inputs-wrapper">
+                    <div class="date-input-container" data-sublabel="Data Inicial">
+                        <input type="date" id="dataInicio" class="filter-input date-input">
+                    </div>
+                    <div class="date-input-container" data-sublabel="Data Final">
+                        <input type="date" id="dataFim" class="filter-input date-input">
+                    </div>
+                </div>
+            </div>
+
+            <div class="filter-group year-group" data-label="Ano">
+                <div class="filter-input-wrapper">
+                    <span class="material-icons filter-icon">calendar_month</span>
+                    <input type="number" id="anoFiltro" placeholder="Ano" class="filter-input year-input" min="2000" max="2100">
+                </div>
+            </div>
+            
+            <button id="clearFiltersBtn" class="action-btn primary btn-limpar">
+                <span class="material-icons">clear_all</span>
+                <span>Limpar Filtros</span>
+            </button>
+        </div>
+
+        <div class="filters-status" id="filtersStatus"></div>
+    </div>
+    
+    <main id="main-content">
+        <!-- Loading Overlay -->
+        <div id="loadingOverlay" class="loading-overlay" style="display: none;">
+            <div class="loading-spinner"></div>
+            <div class="loading-text">Carregando dados...</div>
+        </div>
+        
+        <!-- KPI Cards -->
+        <section class="kpi-section">
+            <div class="kpi-card glass" id="valorTotalCard" style="cursor: pointer;">
+                <span class="material-icons kpi-icon">payments</span>
+                <div class="kpi-content">
+                    <h3>Valor Total Implantações</h3>
+                    <p id="valorTotal" class="kpi-value">R$ 0</p>
+                    <div class="valor-detalhes">
+                        <span class="valor-tag tag-erp" data-tipo="erp">ERP: <span id="valorERP">R$ 0</span></span>
+                        <span class="valor-tag tag-agregado" data-tipo="agregado">Agregado: <span id="valorAgregado">R$ 0</span></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="kpi-card glass" id="comissaoCard" style="cursor: pointer;">
+                <span class="material-icons kpi-icon">monetization_on</span>
+                <div class="kpi-content">
+                    <h3>Comissão</h3>
+                    <p id="valorComissao" class="kpi-value">R$ 0</p>
+                    <small id="comissaoTotal" class="kpi-small">Base: Data Implantação</small>
+                </div>
+            </div>
+
+            <div class="kpi-card glass pending-card" id="pendingCard" style="cursor: pointer;">
+                <span class="material-icons kpi-icon">pending_actions</span>
+                <div class="kpi-content">
+                    <h3>Pendentes</h3>
+                    <p id="totalPendentes" class="kpi-value">0</p>
+                    <small id="valorPendente" class="kpi-small">R$ 0</small>
+                </div>
+            </div>
+
+            <div class="kpi-card glass in-progress-card" id="inProgressCard" style="cursor: pointer;">
+                <span class="material-icons kpi-icon">sync</span>
+                <div class="kpi-content">
+                    <h3>Em Processo</h3>
+                    <p id="totalEmProcesso" class="kpi-value">0</p>
+                    <small id="valorEmProcesso" class="kpi-small">R$ 0</small>
+                </div>
+            </div>
+
+            <div class="kpi-card glass risk-card" id="riskCard" style="cursor: pointer;">
+                <span class="material-icons kpi-icon">warning</span>
+                <div class="kpi-content">
+                    <h3>Em Risco</h3>
+                    <p id="totalRisco" class="kpi-value">0</p>
+                    <small id="valorRisco" class="kpi-small">R$ 0</small>
+                </div>
+            </div>
+
+            <div class="kpi-card glass future-card" id="futureCard" style="cursor: pointer;">
+                <span class="material-icons kpi-icon">date_range</span>
+                <div class="kpi-content">
+                    <h3>Previsão</h3>
+                    <p id="totalFuturo" class="kpi-value">0</p>
+                    <small id="valorFuturo" class="kpi-small">R$ 0</small>
+                </div>
+            </div>
+
+        </section>
+        
+        <!-- Tabela -->
+        <section class="table-section glass">
+            <div class="table-header">
+                <div class="table-header-main">
+                    <h2 style="display: inline-block; margin-right: 0;">Implantações</h2>
+                    <span id="activeFiltersInfo" class="active-filters-info"></span>
+                    <span class="table-subtitle" id="tableAnalytics" style="display: none;">
+                        <span id="uniqueOrgs">0</span> organizações, <span id="uniqueFiliais">0</span> filiais
+                    </span>
+                </div>
+                <span class="table-counter" id="tableCounter">0 registros</span>
+            </div>
+            <div class="table-container">
+                <table id="tabela">
+                    <thead>
+                        <tr>
+                            <th>Org</th>
+                            <th>Descrição Filial</th>
+                            <th>Modalidade</th>
+                            <th>Marca</th>
+                            <th>Sistema</th>
+                            <th>Valor</th>
+                            <th>Status</th>
+                            <th>Detalhes</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            
+            <div class="table-footer">
+                <div class="pagination-info" id="paginationInfo"></div>
+                <button id="loadMoreBtn" class="load-more-btn">
+                    <span class="material-icons">add_circle</span>
+                    Carregar mais
+                </button>
+            </div>
+        </section>
+        
+        <!-- Gráficos -->
+        <section class="charts-section">
+            <div class="chart-box glass">
+                <h3><span class="material-icons">computer</span> Sistemas Implantados</h3>
+                <div class="chart-container">
+                    <canvas id="sistemaChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="chart-box glass">
+                <h3><span class="material-icons">storage</span> SISTEMAS ANTERIORES E BANCO DE DADOS</h3>
+                <div class="chart-container">
+                    <canvas id="bancoChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="chart-box glass">
+                <h3><span class="material-icons">attach_money</span> Valor por Ano</h3>
+                <div class="chart-container">
+                    <canvas id="valorAnoChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="chart-box glass">
+                <h3><span class="material-icons">trending_up</span> Crescimento Temporal</h3>
+                <div class="chart-container">
+                    <canvas id="crescimentoChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="chart-box glass">
+                <h3><span class="material-icons">category</span> Modalidades</h3>
+                <div class="chart-container">
+                    <canvas id="modalidadeChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="chart-box glass">
+                <h3><span class="material-icons">branding_watermark</span> Distribuição por Marcas</h3>
+                <div class="chart-container">
+                    <canvas id="marcaChart"></canvas>
+                </div>
+            </div>
+
+            <div class="chart-box glass">
+                <h3><span class="material-icons">monetization_on</span> Evolução de Comissões</h3>
+                <div class="chart-container">
+                    <canvas id="comissaoMensalChart"></canvas>
+                </div>
+            </div>
+
+            <div class="chart-box glass">
+                <h3><span class="material-icons">task_alt</span> Cumprimento de Prazo</h3>
+                <div class="chart-container">
+                    <canvas id="prazoChart"></canvas>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Gráficos ETL -->
+        <section class="charts-section etl-section">
+            <div class="chart-box glass etl-box">
+                <h3><span class="material-icons etl-icon">donut_large</span> Complexidade dos ETLs</h3>
+                <div class="chart-container">
+                    <canvas id="etlComplexidadeChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="chart-box glass etl-box">
+                <h3><span class="material-icons etl-icon">checklist</span> Tipos de Extração</h3>
+                <div class="chart-container">
+                    <canvas id="etlExtracaoChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="chart-box glass etl-box">
+                <h3><span class="material-icons etl-icon">history</span> Histórico Importado</h3>
+                <div class="chart-container">
+                    <canvas id="etlHistoricoChart"></canvas>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <!-- Modal -->
+    <div id="observacoesModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><span class="material-icons">info</span> Detalhes do Registro</h3>
+                <button class="close-modal material-icons">close</button>
+            </div>
+            <div class="modal-body"></div>
+        </div>
+    </div>
+
+    <!-- Menu Overlay -->
+    <div id="menuOverlay" class="menu-overlay"></div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
+    
+    <script src="/static/js/config.js"></script>
+    <script src="/static/js/utils.js"></script>
+    <script src="/static/js/normalizacao.js"></script>
+    <script src="/static/js/etl.js"></script>
+    <script src="/static/js/dataLoader.js"></script>
+    <script src="/static/js/filters.js"></script>
+    <script src="/static/js/kpi.js"></script>
+    <script src="/static/js/charts.js"></script>
+    <script src="/static/js/table.js"></script>
+    <script src="/static/js/modals.js"></script>
+    <script src="/static/js/theme.js"></script>
+    <script src="/static/js/main.js"></script>
+    <script src="/static/js/user.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            document.addEventListener('keydown', (e) => {
+                if ((e.ctrlKey || e.metaKey) && e.key === 'r') {
+                    e.preventDefault();
+                    document.getElementById('refreshBtn')?.click();
+                }
+                if ((e.ctrlKey || e.metaKey) && e.key === 'l') {
+                    e.preventDefault();
+                    document.getElementById('clearFiltersBtn')?.click();
+                }
+                if (e.key === 'Escape') {
+                    const modal = document.getElementById('observacoesModal');
+                    if (modal?.style.display === 'block') {
+                        modal.style.display = 'none';
+                    }
+                }
+            });
+        });
+        
+    </script>
+</body>
+</html>

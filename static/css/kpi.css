@@ -1,0 +1,219 @@
+/* ============================== */
+/* KPI CARDS - VERSÃO PROFISSIONAL */
+/* ============================== */
+.kpi-section {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.kpi-card {
+    padding: 1rem 0.75rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-width: 0;
+    background: var(--surface);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-sm);
+    transition: all var(--transition-normal);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.kpi-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--primary), transparent);
+    opacity: 0;
+    transition: opacity var(--transition-normal);
+}
+
+.kpi-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--primary-light);
+}
+
+.kpi-card:hover::before {
+    opacity: 1;
+}
+
+.kpi-icon {
+    font-size: 1.5rem !important;
+    padding: 10px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark)) !important;
+    color: white !important;
+    box-shadow: 0 4px 8px rgba(14, 165, 233, 0.25);
+    margin-bottom: 4px;
+    transition: all var(--transition-normal);
+}
+
+.kpi-card:hover .kpi-icon {
+    transform: scale(1.05);
+}
+
+.kpi-content {
+    min-width: 0;
+    width: 100%;
+}
+
+.kpi-content h3 {
+    font-size: 0.65rem;
+    color: var(--text-secondary);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.kpi-value {
+    font-size: 1.1rem;
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.kpi-small {
+    display: block;
+    margin-top: 4px;
+    font-size: 0.65rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Cards de status com ícones coloridos */
+.pending-card .kpi-icon {
+    background: linear-gradient(135deg, var(--warning), #fbbf24) !important;
+}
+
+.in-progress-card .kpi-icon {
+    background: linear-gradient(135deg, var(--info), #60a5fa) !important;
+}
+
+.risk-card .kpi-icon {
+    background: linear-gradient(135deg, var(--danger), #f87171) !important;
+}
+
+.future-card .kpi-icon {
+    background: linear-gradient(135deg, var(--success), #34d399) !important;
+}
+
+/* Card unificado */
+#orgFilialCard .kpi-content div {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    width: 100%;
+}
+
+#orgFilialCard .kpi-content div > div {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    align-items: center;
+}
+
+#orgFilialCard .kpi-value {
+    min-width: auto;
+    text-align: right;
+    font-weight: 700;
+}
+
+/* Ícones duplos */
+.double-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    margin-bottom: 4px;
+}
+
+.double-icon .kpi-icon:first-child {
+    z-index: 2;
+    margin-right: -8px;
+}
+
+.double-icon .kpi-icon:last-child {
+    margin-left: 0;
+    opacity: 0.9;
+}
+
+.valor-detalhes {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin-top: 4px;
+    flex-wrap: wrap;
+}
+
+.valor-tag {
+    font-size: 0.55rem;
+    padding: 2px 6px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    white-space: nowrap;
+}
+
+.valor-tag:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.1);
+}
+
+.valor-tag span {
+    font-weight: 600;
+}
+
+.tag-erp {
+    background: var(--primary)20;
+    color: var(--primary);
+    border: 1px solid var(--primary)30;
+}
+
+.tag-agregado {
+    background: var(--success)20;
+    color: var(--success);
+    border: 1px solid var(--success)30;
+}
+
+#comissaoCard {
+    cursor: pointer;
+    border-left: 1px solid var(--border);
+}
+
+#comissaoCard .kpi-icon {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark)) !important;
+}
+
+#comissaoCard .kpi-value {
+    color: var(--text);
+}
+
+#comissaoCard small {
+    display: block;
+    margin-top: 4px;
+    font-weight: 500;
+    color: var(--text-secondary);
+}
