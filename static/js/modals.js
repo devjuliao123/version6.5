@@ -34,6 +34,15 @@ function criarModal() {
 
 
 function abrirModal(observacoes, dadosRegistro) {
+    // Se dadosRegistro for uma string (JSON), parsear.
+    if (typeof dadosRegistro === 'string') {
+        try {
+            dadosRegistro = JSON.parse(dadosRegistro);
+        } catch (e) {
+            console.error("Erro ao parsear dadosRegistro:", e);
+        }
+    }
+
     const modal = document.getElementById('observacoesModal');
     const modalContent = modal.querySelector('.modal-content');
     if (modalContent) modalContent.classList.remove('modal-painel');

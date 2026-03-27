@@ -1,13 +1,16 @@
-// ==================== PAINEL DE IMPLANTAÇÃO ====================
+// ==================== PAINEL INFORMATIVO ====================
 
-function initPainelImplantacao() {
-    const btn = document.getElementById('painelImplantacaoBtn');
+function initPainelInformativo() {
+    const btn = document.getElementById('painelInformativoBtn');
     if (btn) {
-        btn.addEventListener('click', abrirPainelImplantacao);
+        btn.onclick = (e) => {
+            e.preventDefault();
+            abrirPainelInformativo();
+        };
     }
 }
 
-function abrirPainelImplantacao() {
+function abrirPainelInformativo() {
     const data = state.globalData || [];
 
     // 1. Filtrar conforme regras:
@@ -30,24 +33,16 @@ function abrirPainelImplantacao() {
 
     // 2. Agrupar por Organização
     const orgsAgrupadas = {};
-
-    // Precisamos de todas as empresas da organização para calcular o percentual de progresso
     const todasOrgs = {};
     data.forEach(item => {
         const orgId = item.organizacao_codigo;
         if (!orgId) return;
 
         if (!todasOrgs[orgId]) {
-            todasOrgs[orgId] = {
-                total: 0,
-                concluidas: 0,
-                descricao: item.organizacao_descricao || 'Sem Descrição'
-            };
+            todasOrgs[orgId] = { total: 0, concluidas: 0, descricao: item.organizacao_descricao || 'Sem Descrição' };
         }
-
         todasOrgs[orgId].total++;
-        const temData = item.dataImplantacaoObj || (item.data_implantacao && item.data_implantacao.trim() !== '');
-        if (temData) {
+        if (item.dataImplantacaoObj || (item.data_implantacao && item.data_implantacao.trim() !== '')) {
             todasOrgs[orgId].concluidas++;
         }
     });
@@ -77,88 +72,132 @@ function abrirPainelImplantacao() {
         }
     });
 
-    // Converter para array e ordenar por percentual (menor para maior) ou nome
     const orgsList = Object.values(orgsAgrupadas).sort((a, b) => b.percentual - a.percentual || a.descricao.localeCompare(b.descricao));
 
-    // 3. Criar Modal
-    const modal = document.getElementById('observacoesModal');
-    const modalBody = modal.querySelector('.modal-body');
-    const modalContent = modal.querySelector('.modal-content');
+    // 3. Renderizar na div principal
+    const dashboardView = document.getElementById('dashboard-view');
+    const painelView = document.getElementById('painel-informativo-view');
 
-    // Ajustar largura do modal
-    modalContent.classList.add('modal-painel');
+    if (!dashboardView || !painelView) return;
 
     const html = `
-        <div class="panel-container">
-            <div style="margin-bottom: 1.5rem; text-align: center;">
-                <p style="color: var(--text-secondary); font-size: 0.9rem;">
-                    Acompanhamento de organizações com implantações pendentes (Cloud, ZapCRM e WebSite).
-                </p>
+        <div class="panel-main-header glass">
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <button onclick="voltarAoDashboard()" class="action-btn" title="Voltar ao Dashboard">
+                    <span class="material-icons">arrow_back</span>
+                    <span>Voltar</span>
+                </button>
+                <div class="panel-title-group">
+                    <h2 class="panel-main-title">
+                        <span class="material-icons">rocket_launch</span>
+                        Painel Informativo
+                    </h2>
+                    <p class="panel-subtitle">Acompanhamento de organizações com implantações pendentes</p>
+                </div>
             </div>
+            <div class="panel-stats-summary">
+                <span class="stat-badge"><span class="material-icons">business</span> ${orgsList.length} Orgs</span>
+                <span class="stat-badge"><span class="material-icons">apartment</span> ${baseFiltrada.length} Empresas</span>
+            </div>
+        </div>
 
+        <div class="panel-container">
             ${orgsList.map(org => renderizarCardOrganizacao(org)).join('')}
         </div>
     `;
 
-    modal.querySelector('h3').innerHTML = '<span class="material-icons">rocket_launch</span> Painel de Implantação';
-    modalBody.innerHTML = html;
-    modal.style.display = 'block';
+    painelView.innerHTML = html;
 
-    // Adicionar eventos de toggle
-    const headers = modalBody.querySelectorAll('.org-header');
+    // Switch views
+    dashboardView.style.display = 'none';
+    painelView.style.display = 'block';
+
+    // Scroll to top
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    // Re-bind events for expansion
+    const headers = painelView.querySelectorAll('.org-header');
     headers.forEach(header => {
         header.addEventListener('click', () => {
             const card = header.closest('.org-card');
+
+            // Toggle current card
             card.classList.toggle('expanded');
 
             const icon = header.querySelector('.expand-icon');
-            if (icon) {
-                icon.textContent = card.classList.contains('expanded') ? 'expand_less' : 'expand_more';
-            }
+            if (icon) icon.textContent = card.classList.contains('expanded') ? 'expand_less' : 'expand_more';
+
+            // Optional: Close others
+            /*
+            painelView.querySelectorAll('.org-card').forEach(other => {
+                if (other !== card && other.classList.contains('expanded')) {
+                    other.classList.remove('expanded');
+                    const otherIcon = other.querySelector('.expand-icon');
+                    if (otherIcon) otherIcon.textContent = 'expand_more';
+                }
+            });
+            */
         });
     });
 }
 
+function voltarAoDashboard() {
+    const dashboardView = document.getElementById('dashboard-view');
+    const painelView = document.getElementById('painel-informativo-view');
+
+    if (dashboardView && painelView) {
+        painelView.style.display = 'none';
+        dashboardView.style.display = 'block';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+}
+
 function renderizarCardOrganizacao(org) {
+    const totalPendente = org.emImplantacao.length + org.futuraImplantacao.length;
+
     return `
         <div class="org-card" id="org-${org.codigo}">
             <div class="org-header">
-                <div class="org-info">
+                <div class="org-info-main">
                     <div class="org-icon">
                         <span class="material-icons">business</span>
                     </div>
                     <div>
                         <div class="org-name">${org.codigo} - ${org.descricao}</div>
-                        <div style="font-size: 0.75rem; color: var(--text-secondary); font-weight: 500;">
-                            ${org.emImplantacao.length + org.futuraImplantacao.length} empresa(s) pendente(s)
-                        </div>
                     </div>
                 </div>
 
+                <div class="org-stats-row">
+                    <span>${totalPendente} empresa(s) pendente(s)</span>
+                    <span class="material-icons expand-icon" style="font-size: 20px;">expand_more</span>
+                </div>
+
                 <div class="org-progress-wrapper">
-                    <div class="progress-bar-container" title="${org.percentual}% concluído">
+                    <div class="progress-info">
+                        <span style="font-size: 0.7rem; color: var(--text-secondary);">PROGRESSO GERAL</span>
+                        <span class="progress-percent">${org.percentual}%</span>
+                    </div>
+                    <div class="progress-bar-container">
                         <div class="progress-bar-fill" style="width: ${org.percentual}%"></div>
                     </div>
-                    <div class="progress-percent">${org.percentual}%</div>
-                    <span class="material-icons expand-icon" style="color: var(--text-secondary);">expand_more</span>
                 </div>
             </div>
 
             <div class="org-content">
                 ${org.emImplantacao.length > 0 ? `
                     <div class="section-title implantacao">
-                        <span class="material-icons" style="font-size: 16px;">sync</span> Em Implantação
+                        <span class="material-icons" style="font-size: 14px;">sync</span> Em Implantação
                     </div>
-                    <div class="companies-grid">
+                    <div class="companies-list">
                         ${org.emImplantacao.map(item => renderizarEmpresaItem(item)).join('')}
                     </div>
                 ` : ''}
 
                 ${org.futuraImplantacao.length > 0 ? `
                     <div class="section-title futura">
-                        <span class="material-icons" style="font-size: 16px;">schedule</span> Futura Implantação
+                        <span class="material-icons" style="font-size: 14px;">schedule</span> Futura Implantação
                     </div>
-                    <div class="companies-grid">
+                    <div class="companies-list">
                         ${org.futuraImplantacao.map(item => renderizarEmpresaItem(item)).join('')}
                     </div>
                 ` : ''}
@@ -173,31 +212,36 @@ function renderizarEmpresaItem(item) {
     if (status.status === 'Em Processo') statusClass = 'status-em-processo';
     if (status.status === 'Em Risco') statusClass = 'status-risco';
 
+    const sistemas = (item.sistema || '').split('/').map(s => s.trim()).filter(s => ['CLOUD', 'ZAPCRM', 'WEBSITE'].includes(s.toUpperCase()));
+
+    // Escapar aspas duplas do JSON para o atributo onclick
+    const itemJson = JSON.stringify(item).replace(/"/g, '&quot;').replace(/'/g, "\\'");
+
     return `
-        <div class="company-item" onclick="event.stopPropagation(); abrirModal('${(item.observacoes || '').replace(/'/g, "\\'")}', ${JSON.stringify(item).replace(/'/g, "\\'")})">
+        <div class="company-item" onclick="event.stopPropagation(); abrirModal('${(item.observacoes || '').replace(/'/g, "\\'").replace(/"/g, '&quot;')}', '${itemJson}')">
             <div class="company-header">
-                <div class="company-name">${item.filial_descricao}</div>
-                <div class="company-system">
-                    ${(item.sistema || '').split('/').map(s => renderizarBadgeSistema(s.trim())).join('')}
+                <div class="company-name" title="${item.filial_descricao}">${item.filial_descricao}</div>
+                <div class="company-status ${statusClass}">
+                    <span class="material-icons" style="font-size: 12px;">${status.icone}</span>
+                    <span>${status.mensagem}</span>
                 </div>
             </div>
 
-            <div class="company-status ${statusClass}">
-                <span class="material-icons" style="font-size: 14px;">${status.icone}</span>
-                <span>${status.mensagem}</span>
+            <div style="display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 2px;">
+                ${sistemas.map(s => renderizarBadgeSistema(s)).join('')}
             </div>
 
             <div class="company-footer">
                 <div class="company-date">
                     <div style="display: flex; align-items: center; gap: 4px;">
-                        <span class="material-icons" style="font-size: 12px;">event</span>
+                        <span class="material-icons" style="font-size: 10px;">event</span>
                         Venda: ${item.data_venda || 'N/I'}
                     </div>
                 </div>
                 ${item.data_previsao ? `
                     <div class="company-date">
-                        <div style="display: flex; align-items: center; gap: 4px; color: var(--primary); font-weight: 600;">
-                            <span class="material-icons" style="font-size: 12px;">event_repeat</span>
+                        <div style="display: flex; align-items: center; gap: 4px; color: var(--primary); font-weight: 700;">
+                            <span class="material-icons" style="font-size: 10px;">event_repeat</span>
                             Prev: ${item.data_previsao}
                         </div>
                     </div>
@@ -208,5 +252,6 @@ function renderizarEmpresaItem(item) {
 }
 
 // Tornar disponível globalmente
-window.initPainelImplantacao = initPainelImplantacao;
-window.abrirPainelImplantacao = abrirPainelImplantacao;
+window.initPainelInformativo = initPainelInformativo;
+window.abrirPainelInformativo = abrirPainelInformativo;
+window.voltarAoDashboard = voltarAoDashboard;

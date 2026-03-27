@@ -1,14 +1,70 @@
 /* ============================== */
-/* PAINEL DE IMPLANTAÇÃO         */
+/* PAINEL INFORMATIVO            */
 /* ============================== */
 
-.panel-container {
+.panel-main-header {
+    margin-bottom: 2rem;
+    padding: 1.5rem;
     display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-    padding: 10px;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: var(--border-radius-lg);
+    background: var(--surface);
+    box-shadow: var(--shadow-sm);
 }
 
+.panel-main-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0;
+}
+
+.panel-main-title .material-icons {
+    color: var(--primary);
+    font-size: 2rem;
+}
+
+.panel-subtitle {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin-top: 5px;
+}
+
+.panel-stats-summary {
+    display: flex;
+    gap: 15px;
+}
+
+.stat-badge {
+    background: var(--bg);
+    padding: 8px 16px;
+    border-radius: 40px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid var(--border);
+}
+
+.stat-badge .material-icons {
+    font-size: 18px;
+    color: var(--primary);
+}
+
+.panel-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 1.5rem;
+    padding-bottom: 3rem;
+}
+
+/* Organization Card Style */
 .org-card {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -16,28 +72,28 @@
     overflow: hidden;
     transition: all var(--transition-normal);
     box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-direction: column;
 }
 
 .org-card:hover {
-    box-shadow: var(--shadow);
+    box-shadow: var(--shadow-lg);
     border-color: var(--primary-light);
+    transform: translateY(-5px);
 }
 
 .org-header {
-    padding: 1.25rem;
-    background: var(--bg);
+    padding: 1.5rem;
+    background: var(--surface);
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    flex-direction: column;
+    gap: 1rem;
     cursor: pointer;
     user-select: none;
+    border-bottom: 1px solid var(--border);
 }
 
-.org-header:hover {
-    background: var(--border);
-}
-
-.org-info {
+.org-info-main {
     display: flex;
     align-items: center;
     gap: 12px;
@@ -46,53 +102,71 @@
 .org-icon {
     background: var(--primary);
     color: white;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
+    box-shadow: 0 4px 10px rgba(14, 165, 233, 0.2);
 }
 
 .org-name {
     font-weight: 700;
-    font-size: 1.1rem;
+    font-size: 1rem;
     color: var(--text);
+    line-height: 1.3;
+}
+
+.org-stats-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    font-weight: 600;
 }
 
 .org-progress-wrapper {
     display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 5px;
+}
+
+.progress-info {
+    display: flex;
+    justify-content: space-between;
     align-items: center;
-    gap: 15px;
-    min-width: 200px;
 }
 
 .progress-bar-container {
-    flex: 1;
-    height: 10px;
-    background: var(--border);
-    border-radius: 5px;
+    height: 8px;
+    background: var(--bg);
+    border-radius: 4px;
     overflow: hidden;
 }
 
 .progress-bar-fill {
     height: 100%;
-    background: var(--success);
-    transition: width 0.5s ease-out;
+    background: linear-gradient(90deg, var(--success), #34d399);
+    transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .progress-percent {
-    font-weight: 700;
+    font-weight: 800;
     font-size: 0.9rem;
     color: var(--success);
-    min-width: 45px;
 }
 
+/* Content Area */
 .org-content {
     display: none;
     padding: 1.25rem;
-    border-top: 1px solid var(--border);
-    background: var(--surface);
+    background: var(--bg);
+    flex: 1;
+    max-height: 400px;
+    overflow-y: auto;
 }
 
 .org-card.expanded .org-content {
@@ -100,44 +174,48 @@
 }
 
 .org-card.expanded .org-header {
-    border-bottom: 1px solid var(--border);
+    background: var(--bg);
 }
 
 .section-title {
-    font-size: 0.8rem;
-    font-weight: 700;
+    font-size: 0.7rem;
+    font-weight: 800;
     color: var(--text-secondary);
     text-transform: uppercase;
-    margin-bottom: 1rem;
+    margin-bottom: 0.75rem;
     display: flex;
     align-items: center;
     gap: 6px;
+    letter-spacing: 0.5px;
 }
 
 .section-title.implantacao { color: var(--info); }
 .section-title.futura { color: var(--warning); }
 
-.companies-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 1rem;
+.companies-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
     margin-bottom: 1.5rem;
 }
 
 .company-item {
-    background: var(--bg);
+    background: var(--surface);
     border: 1px solid var(--border);
     border-radius: var(--border-radius);
-    padding: 1rem;
+    padding: 0.9rem;
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    transition: transform 0.2s;
+    gap: 6px;
+    transition: all 0.2s;
+    cursor: pointer;
 }
 
 .company-item:hover {
-    transform: translateY(-3px);
-    border-color: var(--primary-light);
+    border-color: var(--primary);
+    background: var(--surface);
+    box-shadow: var(--shadow-sm);
+    transform: scale(1.02);
 }
 
 .company-header {
@@ -148,21 +226,21 @@
 
 .company-name {
     font-weight: 600;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     color: var(--text);
-}
-
-.company-system {
-    display: flex;
-    gap: 4px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
 }
 
 .company-status {
     display: flex;
     align-items: center;
     gap: 4px;
-    font-size: 0.75rem;
-    font-weight: 600;
+    font-size: 0.7rem;
+    font-weight: 700;
 }
 
 .status-em-processo { color: var(--info); }
@@ -173,33 +251,24 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-top: auto;
-    padding-top: 8px;
+    margin-top: 4px;
+    padding-top: 6px;
     border-top: 1px dashed var(--border);
 }
 
 .company-date {
-    font-size: 0.7rem;
+    font-size: 0.65rem;
     color: var(--text-secondary);
 }
 
-/* Modal Ajuste */
-.modal-painel {
-    max-width: 1000px !important;
-}
-
 @media (max-width: 768px) {
-    .org-header {
+    .panel-main-header {
         flex-direction: column;
         align-items: flex-start;
-        gap: 12px;
+        gap: 15px;
     }
 
-    .org-progress-wrapper {
-        width: 100%;
-    }
-
-    .companies-grid {
+    .panel-container {
         grid-template-columns: 1fr;
     }
 }
