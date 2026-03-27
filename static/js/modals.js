@@ -35,6 +35,9 @@ function criarModal() {
 
 function abrirModal(observacoes, dadosRegistro) {
     const modal = document.getElementById('observacoesModal');
+    const modalContent = modal.querySelector('.modal-content');
+    if (modalContent) modalContent.classList.remove('modal-painel');
+
     const modalBody = modal.querySelector('.modal-body');
     const isImplRole = (typeof isAnonymized === 'function') ? isAnonymized() : false;
 
@@ -206,6 +209,9 @@ function abrirModal(observacoes, dadosRegistro) {
 
 function criarModalMelhorado(titulo, icone, cor, dados, config) {
     const modal = document.getElementById('observacoesModal');
+    const modalContent = modal.querySelector('.modal-content');
+    if (modalContent) modalContent.classList.remove('modal-painel');
+
     const modalBody = modal.querySelector('.modal-body');
 
     // Para o modal de valor, usar busca estrita em certas tags e incluir tags virtuais (ERP/AGREGADO)

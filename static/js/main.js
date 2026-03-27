@@ -131,6 +131,7 @@ function initFilterMenu() {
 async function init() {
     initTheme();
     initFilterMenu();
+    initPainelImplantacao();
     criarModal();
 
     // 1. Carregar usuário primeiro (Crítico para role-based security)

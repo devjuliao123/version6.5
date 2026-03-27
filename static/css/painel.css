@@ -1,0 +1,205 @@
+/* ============================== */
+/* PAINEL DE IMPLANTAÇÃO         */
+/* ============================== */
+
+.panel-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 10px;
+}
+
+.org-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--border-radius-lg);
+    overflow: hidden;
+    transition: all var(--transition-normal);
+    box-shadow: var(--shadow-sm);
+}
+
+.org-card:hover {
+    box-shadow: var(--shadow);
+    border-color: var(--primary-light);
+}
+
+.org-header {
+    padding: 1.25rem;
+    background: var(--bg);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+}
+
+.org-header:hover {
+    background: var(--border);
+}
+
+.org-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.org-icon {
+    background: var(--primary);
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.org-name {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--text);
+}
+
+.org-progress-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    min-width: 200px;
+}
+
+.progress-bar-container {
+    flex: 1;
+    height: 10px;
+    background: var(--border);
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    background: var(--success);
+    transition: width 0.5s ease-out;
+}
+
+.progress-percent {
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--success);
+    min-width: 45px;
+}
+
+.org-content {
+    display: none;
+    padding: 1.25rem;
+    border-top: 1px solid var(--border);
+    background: var(--surface);
+}
+
+.org-card.expanded .org-content {
+    display: block;
+}
+
+.org-card.expanded .org-header {
+    border-bottom: 1px solid var(--border);
+}
+
+.section-title {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.section-title.implantacao { color: var(--info); }
+.section-title.futura { color: var(--warning); }
+
+.companies-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.company-item {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--border-radius);
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    transition: transform 0.2s;
+}
+
+.company-item:hover {
+    transform: translateY(-3px);
+    border-color: var(--primary-light);
+}
+
+.company-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.company-name {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--text);
+}
+
+.company-system {
+    display: flex;
+    gap: 4px;
+}
+
+.company-status {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.status-em-processo { color: var(--info); }
+.status-risco { color: var(--danger); }
+.status-pendente { color: var(--warning); }
+
+.company-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto;
+    padding-top: 8px;
+    border-top: 1px dashed var(--border);
+}
+
+.company-date {
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+}
+
+/* Modal Ajuste */
+.modal-painel {
+    max-width: 1000px !important;
+}
+
+@media (max-width: 768px) {
+    .org-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .org-progress-wrapper {
+        width: 100%;
+    }
+
+    .companies-grid {
+        grid-template-columns: 1fr;
+    }
+}
