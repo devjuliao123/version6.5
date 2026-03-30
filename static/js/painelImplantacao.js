@@ -39,7 +39,7 @@ function abrirPainelInformativo() {
     });
 
     if (baseFiltrada.length === 0) {
-        showNotification('Nenhuma organização em implantação encontrada para os critérios selecionados.', 'info');
+        mostrarEmptyState();
         return;
     }
 
@@ -62,8 +62,6 @@ function abrirPainelInformativo() {
 
         if (!orgsAgrupadas[orgId]) {
             const stats = todasOrgs[orgId];
-
-            // O percentual da organização agora é a média do percentual de todas as suas empresas
             const totalProgresso = stats.empresas.reduce((sum, e) => sum + extrairPercentualEmpresa(e), 0);
             const percentualMedia = stats.empresas.length > 0 ? Math.round(totalProgresso / stats.empresas.length) : 0;
 
@@ -87,8 +85,6 @@ function abrirPainelInformativo() {
     });
 
     const orgsList = Object.values(orgsAgrupadas).sort((a, b) => b.percentual - a.percentual || a.descricao.localeCompare(b.descricao));
-
-    // Guardar globalmente para o popup
     state.currentPainelOrgs = orgsAgrupadas;
 
     // 3. Renderizar na div principal
@@ -98,45 +94,58 @@ function abrirPainelInformativo() {
     if (!dashboardView || !painelView) return;
 
     const html = `
-        <div class="panel-main-header glass">
-            <div style="display: flex; align-items: center; gap: 15px;">
-                <button onclick="voltarAoDashboard()" class="action-btn" title="Voltar ao Dashboard">
+        <div class="panel-main-header">
+            <div style="display: flex; align-items: center; gap: 20px;">
+                <button onclick="voltarAoDashboard()" class="action-btn secondary" title="Voltar ao Dashboard" style="border-radius: 12px; padding: 12px;">
                     <span class="material-icons">arrow_back</span>
-                    <span>Voltar</span>
                 </button>
                 <div class="panel-title-group">
                     <h2 class="panel-main-title">
                         <span class="material-icons">rocket_launch</span>
                         Painel Informativo
                     </h2>
-                    <p class="panel-subtitle">Acompanhamento de organizações com implantações pendentes</p>
+                    <p class="panel-subtitle">Acompanhamento estratégico de implantações pendentes</p>
                 </div>
             </div>
             <div class="panel-stats-summary">
-                <span class="stat-badge"><span class="material-icons">business</span> ${orgsList.length} Orgs</span>
-                <span class="stat-badge"><span class="material-icons">apartment</span> ${baseFiltrada.length} Empresas</span>
+                <div class="stat-badge"><span class="material-icons">business</span> ${orgsList.length} Orgs</div>
+                <div class="stat-badge"><span class="material-icons">apartment</span> ${baseFiltrada.length} Empresas</div>
             </div>
         </div>
 
         <div class="panel-container">
-            ${orgsList.map(org => renderizarCardOrganizacao(org)).join('')}
+            ${orgsList.map((org, index) => renderizarCardOrganizacao(org, index)).join('')}
         </div>
     `;
 
     painelView.innerHTML = html;
-
-    // Switch views
     dashboardView.style.display = 'none';
     painelView.style.display = 'block';
-
-    // Scroll to top
     window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function mostrarEmptyState() {
+    const dashboardView = document.getElementById('dashboard-view');
+    const painelView = document.getElementById('painel-informativo-view');
+    if (!dashboardView || !painelView) return;
+
+    painelView.innerHTML = `
+        <div class="panel-main-header">
+            <button onclick="voltarAoDashboard()" class="action-btn secondary"><span class="material-icons">arrow_back</span> Voltar</button>
+        </div>
+        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 5rem 2rem; text-align: center; background: var(--surface); border-radius: var(--border-radius-lg); border: 1px dashed var(--border);">
+            <span class="material-icons" style="font-size: 5rem; color: var(--border); margin-bottom: 1.5rem;">auto_awesome_motion</span>
+            <h2 style="color: var(--text);">Tudo em ordem!</h2>
+            <p style="color: var(--text-secondary); max-width: 400px; margin-top: 0.5rem;">Nenhuma organização com implantações pendentes nos sistemas Cloud, ZapCRM ou WebSite no momento.</p>
+        </div>
+    `;
+    dashboardView.style.display = 'none';
+    painelView.style.display = 'block';
 }
 
 function voltarAoDashboard() {
     const dashboardView = document.getElementById('dashboard-view');
     const painelView = document.getElementById('painel-informativo-view');
-
     if (dashboardView && painelView) {
         painelView.style.display = 'none';
         dashboardView.style.display = 'block';
@@ -144,29 +153,30 @@ function voltarAoDashboard() {
     }
 }
 
-function renderizarCardOrganizacao(org) {
+function renderizarCardOrganizacao(org, index) {
     const totalPendente = org.emImplantacao.length + org.futuraImplantacao.length;
+    const delay = (index * 0.05).toFixed(2);
 
     return `
-        <div class="org-card" id="org-${org.codigo}" onclick="abrirPopupEmpresas('${org.codigo}')">
+        <div class="org-card" id="org-${org.codigo}" onclick="abrirPopupEmpresas('${org.codigo}')" style="animation-delay: ${delay}s">
             <div class="org-header">
                 <div class="org-info-main">
                     <div class="org-icon">
                         <span class="material-icons">business</span>
                     </div>
-                    <div>
+                    <div class="org-name-wrapper">
                         <div class="org-name">${org.codigo} - ${org.descricao}</div>
                     </div>
                 </div>
 
                 <div class="org-stats-row">
                     <span>${totalPendente} empresa(s) pendente(s)</span>
-                    <span class="material-icons expand-icon" style="font-size: 20px; color: var(--primary);">visibility</span>
+                    <span class="material-icons" style="font-size: 20px; color: var(--primary);">chevron_right</span>
                 </div>
 
                 <div class="org-progress-wrapper">
                     <div class="progress-info">
-                        <span style="font-size: 0.7rem; color: var(--text-secondary);">PROGRESSO DA ORGANIZAÇÃO</span>
+                        <span class="progress-label">Progresso Geral</span>
                         <span class="progress-percent">${org.percentual}%</span>
                     </div>
                     <div class="progress-bar-container">
@@ -187,29 +197,29 @@ function abrirPopupEmpresas(orgId) {
     const modalContent = modal.querySelector('.modal-content');
 
     modalContent.classList.add('modal-painel');
-    modal.querySelector('h3').innerHTML = `<span class="material-icons">business</span> ${org.codigo} - ${org.descricao}`;
+    modal.querySelector('h3').innerHTML = `<span class="material-icons" style="color: var(--primary); font-size: 24px;">business</span> ${org.codigo} - ${org.descricao}`;
 
     const html = `
         <div class="org-popup-content">
             <div class="popup-header-stats">
                 <div class="stat-box">
                     <div class="stat-value">${org.percentual}%</div>
-                    <div class="stat-label">Progresso Médio</div>
+                    <div class="stat-label">Desenvolvimento</div>
                 </div>
                 <div class="stat-box">
-                    <div class="stat-value">${org.emImplantacao.length}</div>
+                    <div class="stat-value" style="color: var(--info);">${org.emImplantacao.length}</div>
                     <div class="stat-label">Em Implantação</div>
                 </div>
                 <div class="stat-box">
-                    <div class="stat-value">${org.futuraImplantacao.length}</div>
-                    <div class="stat-label">Pendentes</div>
+                    <div class="stat-value" style="color: var(--warning);">${org.futuraImplantacao.length}</div>
+                    <div class="stat-label">Futuras</div>
                 </div>
             </div>
 
             ${org.emImplantacao.length > 0 ? `
                 <div class="popup-section">
                     <div class="section-title implantacao">
-                        <span class="material-icons">sync</span> Em Implantação
+                        <span class="material-icons">sync</span> Unidades em Implantação
                     </div>
                     <div class="popup-companies-grid">
                         ${org.emImplantacao.map(item => renderizarEmpresaCardPopup(item)).join('')}
@@ -220,7 +230,7 @@ function abrirPopupEmpresas(orgId) {
             ${org.futuraImplantacao.length > 0 ? `
                 <div class="popup-section">
                     <div class="section-title futura">
-                        <span class="material-icons">schedule</span> Futura Implantação
+                        <span class="material-icons">schedule</span> Próximas Unidades
                     </div>
                     <div class="popup-companies-grid">
                         ${org.futuraImplantacao.map(item => renderizarEmpresaCardPopup(item)).join('')}
@@ -257,7 +267,7 @@ function renderizarEmpresaCardPopup(item) {
 
             <div class="card-progress-popup">
                 <div class="progress-info-popup">
-                    <span>Desenvolvimento</span>
+                    <span>Progresso</span>
                     <span class="percent-value">${item.percentual}%</span>
                 </div>
                 <div class="progress-bar-popup">
@@ -273,7 +283,7 @@ function renderizarEmpresaCardPopup(item) {
                 ${item.data_previsao ? `
                     <div class="footer-info highlight">
                         <span class="material-icons">event_repeat</span>
-                        Previsão: ${item.data_previsao}
+                        Prev: ${item.data_previsao}
                     </div>
                 ` : ''}
             </div>
