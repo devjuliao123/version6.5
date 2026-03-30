@@ -34,6 +34,12 @@ function criarModal() {
 
 
 function abrirModal(observacoes, dadosRegistro) {
+    // Restaurar título padrão caso tenha sido alterado pelo painel
+    const modalHeaderH3 = document.querySelector('#observacoesModal h3');
+    if (modalHeaderH3) {
+        modalHeaderH3.innerHTML = '<span class="material-icons">info</span> Detalhes do Registro';
+    }
+
     // Se dadosRegistro for uma string (JSON), parsear.
     if (typeof dadosRegistro === 'string') {
         try {

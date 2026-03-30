@@ -10,6 +10,18 @@ function initPainelInformativo() {
     }
 }
 
+function extrairPercentualEmpresa(item) {
+    const obs = (item.observacoes || '').toUpperCase();
+    const match = obs.match(/(\d+)%/);
+    if (match) return parseInt(match[1]);
+
+    const status = extrairStatus(item);
+    if (status.status === 'Concluído') return 100;
+    if (status.status === 'Em Processo') return 50;
+    if (status.status === 'Em Risco') return 25;
+    return 0; // Pendente ou outros
+}
+
 function abrirPainelInformativo() {
     const data = state.globalData || [];
 
@@ -39,12 +51,9 @@ function abrirPainelInformativo() {
         if (!orgId) return;
 
         if (!todasOrgs[orgId]) {
-            todasOrgs[orgId] = { total: 0, concluidas: 0, descricao: item.organizacao_descricao || 'Sem Descrição' };
+            todasOrgs[orgId] = { empresas: [], descricao: item.organizacao_descricao || 'Sem Descrição' };
         }
-        todasOrgs[orgId].total++;
-        if (item.dataImplantacaoObj || (item.data_implantacao && item.data_implantacao.trim() !== '')) {
-            todasOrgs[orgId].concluidas++;
-        }
+        todasOrgs[orgId].empresas.push(item);
     });
 
     baseFiltrada.forEach(item => {
@@ -52,27 +61,35 @@ function abrirPainelInformativo() {
         if (!orgId) return;
 
         if (!orgsAgrupadas[orgId]) {
-            const stats = todasOrgs[orgId] || { total: 0, concluidas: 0, descricao: item.organizacao_descricao };
-            const percentual = stats.total > 0 ? Math.round((stats.concluidas / stats.total) * 100) : 0;
+            const stats = todasOrgs[orgId];
+
+            // O percentual da organização agora é a média do percentual de todas as suas empresas
+            const totalProgresso = stats.empresas.reduce((sum, e) => sum + extrairPercentualEmpresa(e), 0);
+            const percentualMedia = stats.empresas.length > 0 ? Math.round(totalProgresso / stats.empresas.length) : 0;
 
             orgsAgrupadas[orgId] = {
                 codigo: orgId,
                 descricao: stats.descricao,
-                percentual: percentual,
+                percentual: percentualMedia,
                 emImplantacao: [],
                 futuraImplantacao: []
             };
         }
 
         const status = extrairStatus(item);
+        const empresaComPercentual = { ...item, percentual: extrairPercentualEmpresa(item) };
+
         if (status.status === 'Em Processo' || status.status === 'Em Risco') {
-            orgsAgrupadas[orgId].emImplantacao.push(item);
+            orgsAgrupadas[orgId].emImplantacao.push(empresaComPercentual);
         } else {
-            orgsAgrupadas[orgId].futuraImplantacao.push(item);
+            orgsAgrupadas[orgId].futuraImplantacao.push(empresaComPercentual);
         }
     });
 
     const orgsList = Object.values(orgsAgrupadas).sort((a, b) => b.percentual - a.percentual || a.descricao.localeCompare(b.descricao));
+
+    // Guardar globalmente para o popup
+    state.currentPainelOrgs = orgsAgrupadas;
 
     // 3. Renderizar na div principal
     const dashboardView = document.getElementById('dashboard-view');
@@ -114,31 +131,6 @@ function abrirPainelInformativo() {
 
     // Scroll to top
     window.scrollTo({ top: 0, behavior: 'smooth' });
-
-    // Re-bind events for expansion
-    const headers = painelView.querySelectorAll('.org-header');
-    headers.forEach(header => {
-        header.addEventListener('click', () => {
-            const card = header.closest('.org-card');
-
-            // Toggle current card
-            card.classList.toggle('expanded');
-
-            const icon = header.querySelector('.expand-icon');
-            if (icon) icon.textContent = card.classList.contains('expanded') ? 'expand_less' : 'expand_more';
-
-            // Optional: Close others
-            /*
-            painelView.querySelectorAll('.org-card').forEach(other => {
-                if (other !== card && other.classList.contains('expanded')) {
-                    other.classList.remove('expanded');
-                    const otherIcon = other.querySelector('.expand-icon');
-                    if (otherIcon) otherIcon.textContent = 'expand_more';
-                }
-            });
-            */
-        });
-    });
 }
 
 function voltarAoDashboard() {
@@ -156,7 +148,7 @@ function renderizarCardOrganizacao(org) {
     const totalPendente = org.emImplantacao.length + org.futuraImplantacao.length;
 
     return `
-        <div class="org-card" id="org-${org.codigo}">
+        <div class="org-card" id="org-${org.codigo}" onclick="abrirPopupEmpresas('${org.codigo}')">
             <div class="org-header">
                 <div class="org-info-main">
                     <div class="org-icon">
@@ -169,12 +161,12 @@ function renderizarCardOrganizacao(org) {
 
                 <div class="org-stats-row">
                     <span>${totalPendente} empresa(s) pendente(s)</span>
-                    <span class="material-icons expand-icon" style="font-size: 20px;">expand_more</span>
+                    <span class="material-icons expand-icon" style="font-size: 20px; color: var(--primary);">visibility</span>
                 </div>
 
                 <div class="org-progress-wrapper">
                     <div class="progress-info">
-                        <span style="font-size: 0.7rem; color: var(--text-secondary);">PROGRESSO GERAL</span>
+                        <span style="font-size: 0.7rem; color: var(--text-secondary);">PROGRESSO DA ORGANIZAÇÃO</span>
                         <span class="progress-percent">${org.percentual}%</span>
                     </div>
                     <div class="progress-bar-container">
@@ -182,68 +174,106 @@ function renderizarCardOrganizacao(org) {
                     </div>
                 </div>
             </div>
-
-            <div class="org-content">
-                ${org.emImplantacao.length > 0 ? `
-                    <div class="section-title implantacao">
-                        <span class="material-icons" style="font-size: 14px;">sync</span> Em Implantação
-                    </div>
-                    <div class="companies-list">
-                        ${org.emImplantacao.map(item => renderizarEmpresaItem(item)).join('')}
-                    </div>
-                ` : ''}
-
-                ${org.futuraImplantacao.length > 0 ? `
-                    <div class="section-title futura">
-                        <span class="material-icons" style="font-size: 14px;">schedule</span> Futura Implantação
-                    </div>
-                    <div class="companies-list">
-                        ${org.futuraImplantacao.map(item => renderizarEmpresaItem(item)).join('')}
-                    </div>
-                ` : ''}
-            </div>
         </div>
     `;
 }
 
-function renderizarEmpresaItem(item) {
+function abrirPopupEmpresas(orgId) {
+    const org = state.currentPainelOrgs ? state.currentPainelOrgs[orgId] : null;
+    if (!org) return;
+
+    const modal = document.getElementById('observacoesModal');
+    const modalBody = modal.querySelector('.modal-body');
+    const modalContent = modal.querySelector('.modal-content');
+
+    modalContent.classList.add('modal-painel');
+    modal.querySelector('h3').innerHTML = `<span class="material-icons">business</span> ${org.codigo} - ${org.descricao}`;
+
+    const html = `
+        <div class="org-popup-content">
+            <div class="popup-header-stats">
+                <div class="stat-box">
+                    <div class="stat-value">${org.percentual}%</div>
+                    <div class="stat-label">Progresso Médio</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value">${org.emImplantacao.length}</div>
+                    <div class="stat-label">Em Implantação</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value">${org.futuraImplantacao.length}</div>
+                    <div class="stat-label">Pendentes</div>
+                </div>
+            </div>
+
+            ${org.emImplantacao.length > 0 ? `
+                <div class="popup-section">
+                    <div class="section-title implantacao">
+                        <span class="material-icons">sync</span> Em Implantação
+                    </div>
+                    <div class="popup-companies-grid">
+                        ${org.emImplantacao.map(item => renderizarEmpresaCardPopup(item)).join('')}
+                    </div>
+                </div>
+            ` : ''}
+
+            ${org.futuraImplantacao.length > 0 ? `
+                <div class="popup-section">
+                    <div class="section-title futura">
+                        <span class="material-icons">schedule</span> Futura Implantação
+                    </div>
+                    <div class="popup-companies-grid">
+                        ${org.futuraImplantacao.map(item => renderizarEmpresaCardPopup(item)).join('')}
+                    </div>
+                </div>
+            ` : ''}
+        </div>
+    `;
+
+    modalBody.innerHTML = html;
+    modal.style.display = 'block';
+}
+
+function renderizarEmpresaCardPopup(item) {
     const status = extrairStatus(item);
     let statusClass = 'status-pendente';
     if (status.status === 'Em Processo') statusClass = 'status-em-processo';
     if (status.status === 'Em Risco') statusClass = 'status-risco';
 
     const sistemas = (item.sistema || '').split('/').map(s => s.trim()).filter(s => ['CLOUD', 'ZAPCRM', 'WEBSITE'].includes(s.toUpperCase()));
-
-    // Escapar aspas duplas do JSON para o atributo onclick
     const itemJson = JSON.stringify(item).replace(/"/g, '&quot;').replace(/'/g, "\\'");
+    const obsEscaped = (item.observacoes || '').replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, ' ').replace(/\r/g, ' ');
 
     return `
-        <div class="company-item" onclick="event.stopPropagation(); abrirModal('${(item.observacoes || '').replace(/'/g, "\\'").replace(/"/g, '&quot;')}', '${itemJson}')">
-            <div class="company-header">
-                <div class="company-name" title="${item.filial_descricao}">${item.filial_descricao}</div>
-                <div class="company-status ${statusClass}">
-                    <span class="material-icons" style="font-size: 12px;">${status.icone}</span>
-                    <span>${status.mensagem}</span>
-                </div>
+        <div class="company-card-popup" onclick="event.stopPropagation(); abrirModal('${obsEscaped}', '${itemJson}')">
+            <div class="card-header-popup">
+                <div class="company-name-popup" title="${item.filial_descricao}">${item.filial_descricao}</div>
+                <div class="company-badge-popup ${statusClass}">${status.mensagem}</div>
             </div>
 
-            <div style="display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 2px;">
+            <div class="card-systems-popup">
                 ${sistemas.map(s => renderizarBadgeSistema(s)).join('')}
             </div>
 
-            <div class="company-footer">
-                <div class="company-date">
-                    <div style="display: flex; align-items: center; gap: 4px;">
-                        <span class="material-icons" style="font-size: 10px;">event</span>
-                        Venda: ${item.data_venda || 'N/I'}
-                    </div>
+            <div class="card-progress-popup">
+                <div class="progress-info-popup">
+                    <span>Desenvolvimento</span>
+                    <span class="percent-value">${item.percentual}%</span>
+                </div>
+                <div class="progress-bar-popup">
+                    <div class="progress-fill-popup" style="width: ${item.percentual}%"></div>
+                </div>
+            </div>
+
+            <div class="card-footer-popup">
+                <div class="footer-info">
+                    <span class="material-icons">calendar_today</span>
+                    Venda: ${item.data_venda || 'N/I'}
                 </div>
                 ${item.data_previsao ? `
-                    <div class="company-date">
-                        <div style="display: flex; align-items: center; gap: 4px; color: var(--primary); font-weight: 700;">
-                            <span class="material-icons" style="font-size: 10px;">event_repeat</span>
-                            Prev: ${item.data_previsao}
-                        </div>
+                    <div class="footer-info highlight">
+                        <span class="material-icons">event_repeat</span>
+                        Previsão: ${item.data_previsao}
                     </div>
                 ` : ''}
             </div>
@@ -255,3 +285,4 @@ function renderizarEmpresaItem(item) {
 window.initPainelInformativo = initPainelInformativo;
 window.abrirPainelInformativo = abrirPainelInformativo;
 window.voltarAoDashboard = voltarAoDashboard;
+window.abrirPopupEmpresas = abrirPopupEmpresas;

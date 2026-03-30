@@ -261,7 +261,189 @@
     color: var(--text-secondary);
 }
 
+/* Popup Styles */
+.org-popup-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    padding: 0.5rem;
+}
+
+.popup-header-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    background: var(--surface);
+    padding: 1.5rem;
+    border-radius: var(--border-radius-lg);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-sm);
+}
+
+.stat-box {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 10px;
+    background: var(--bg);
+    border-radius: var(--border-radius);
+    border: 1px solid transparent;
+    transition: all 0.2s;
+}
+
+.stat-box:hover {
+    border-color: var(--primary-light);
+    transform: translateY(-2px);
+}
+
+.stat-value {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: var(--primary);
+}
+
+.stat-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+}
+
+.popup-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.popup-companies-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1rem;
+}
+
+.company-card-popup {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--border-radius-lg);
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+}
+
+.company-card-popup:hover {
+    border-color: var(--primary);
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-5px);
+}
+
+.card-header-popup {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.company-name-popup {
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--text);
+    line-height: 1.4;
+}
+
+.company-badge-popup {
+    font-size: 0.65rem;
+    font-weight: 800;
+    padding: 4px 8px;
+    border-radius: 4px;
+    text-transform: uppercase;
+}
+
+.company-badge-popup.status-em-processo { background: rgba(59, 130, 246, 0.1); color: var(--info); }
+.company-badge-popup.status-risco { background: rgba(239, 68, 68, 0.1); color: var(--danger); }
+.company-badge-popup.status-pendente { background: rgba(245, 158, 11, 0.1); color: var(--warning); }
+
+.card-systems-popup {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+.card-progress-popup {
+    background: var(--bg);
+    padding: 10px;
+    border-radius: var(--border-radius-sm);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.progress-info-popup {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+}
+
+.progress-info-popup .percent-value {
+    color: var(--success);
+}
+
+.progress-bar-popup {
+    height: 6px;
+    background: var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.progress-fill-popup {
+    height: 100%;
+    background: var(--success);
+    border-radius: 3px;
+}
+
+.card-footer-popup {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 5px;
+    padding-top: 10px;
+    border-top: 1px solid var(--border);
+}
+
+.footer-info {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.footer-info .material-icons {
+    font-size: 14px;
+}
+
+.footer-info.highlight {
+    color: var(--primary);
+}
+
 @media (max-width: 768px) {
+    .popup-header-stats {
+        grid-template-columns: 1fr;
+    }
+
+    .popup-companies-grid {
+        grid-template-columns: 1fr;
+    }
+
     .panel-main-header {
         flex-direction: column;
         align-items: flex-start;
