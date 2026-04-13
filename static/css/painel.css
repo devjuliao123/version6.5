@@ -1,0 +1,433 @@
+/* ============================== */
+/* PAINEL INFORMATIVO (PROFESSIONAL) */
+/* ============================== */
+
+/* Main Header */
+.panel-main-header {
+    margin-bottom: 2rem;
+    padding: 1.75rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: var(--border-radius-lg);
+    background: var(--surface);
+    box-shadow: var(--shadow-lg);
+    border: 1px solid var(--border);
+    animation: fadeInDown 0.5s ease-out;
+}
+
+.panel-title-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.panel-main-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0;
+    letter-spacing: -0.5px;
+}
+
+.panel-main-title .material-icons {
+    color: var(--primary);
+    font-size: 2.25rem;
+}
+
+.panel-subtitle {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    margin-top: 4px;
+    font-weight: 500;
+}
+
+.panel-stats-summary {
+    display: flex;
+    gap: 12px;
+}
+
+.stat-badge {
+    background: var(--bg);
+    padding: 10px 18px;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid var(--border);
+    transition: all 0.2s;
+}
+
+.stat-badge:hover {
+    border-color: var(--primary-light);
+    background: var(--surface);
+}
+
+.stat-badge .material-icons {
+    font-size: 20px;
+    color: var(--primary);
+}
+
+/* Grid Layout */
+.panel-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+    gap: 2rem;
+    padding-bottom: 4rem;
+}
+
+/* Organization Card Style */
+.org-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--border-radius-lg);
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    position: relative;
+    animation: fadeInUp 0.5s ease-out both;
+}
+
+.org-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: var(--primary);
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.org-card:hover {
+    box-shadow: var(--shadow-xl);
+    border-color: var(--primary-light);
+    transform: translateY(-8px);
+}
+
+.org-card:hover::after {
+    opacity: 1;
+}
+
+.org-header {
+    padding: 1.75rem;
+    background: var(--surface);
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    user-select: none;
+}
+
+.org-info-main {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.org-icon {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: white;
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 6px 15px rgba(14, 165, 233, 0.3);
+}
+
+.org-name {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--text);
+    line-height: 1.2;
+}
+
+.org-stats-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    font-weight: 600;
+    padding: 8px 12px;
+    background: var(--bg);
+    border-radius: 8px;
+}
+
+.org-progress-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 4px;
+}
+
+.progress-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.progress-label {
+    font-size: 0.7rem;
+    font-weight: 800;
+    color: var(--text-secondary);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.progress-bar-container {
+    height: 10px;
+    background: var(--bg);
+    border-radius: 6px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+}
+
+.progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #10b981, #34d399);
+    border-radius: 6px;
+    transition: width 1s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.progress-percent {
+    font-weight: 800;
+    font-size: 1rem;
+    color: var(--success);
+}
+
+/* Popup / Modal Content */
+.org-popup-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+    padding: 0.5rem;
+}
+
+.popup-header-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    background: var(--surface);
+    padding: 1.5rem;
+    border-radius: var(--border-radius-lg);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+}
+
+.stat-box {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 1.25rem;
+    background: var(--bg);
+    border-radius: 14px;
+    border: 1px solid transparent;
+    transition: all 0.3s;
+}
+
+.stat-box:hover {
+    border-color: var(--primary-light);
+    background: var(--surface);
+    box-shadow: var(--shadow-sm);
+    transform: translateY(-4px);
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--primary);
+    line-height: 1;
+}
+
+.stat-label {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.popup-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.popup-companies-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.5rem;
+}
+
+.company-card-popup {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--border-radius-lg);
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+}
+
+.company-card-popup:hover {
+    border-color: var(--primary);
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-5px);
+}
+
+.card-header-popup {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.company-name-popup {
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--text);
+    line-height: 1.4;
+    flex: 1;
+}
+
+.company-badge-popup {
+    font-size: 0.65rem;
+    font-weight: 800;
+    padding: 5px 10px;
+    border-radius: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+}
+
+.company-badge-popup.status-em-processo { background: rgba(59, 130, 246, 0.1); color: var(--info); }
+.company-badge-popup.status-risco { background: rgba(239, 68, 68, 0.1); color: var(--danger); }
+.company-badge-popup.status-pendente { background: rgba(245, 158, 11, 0.1); color: var(--warning); }
+
+.card-systems-popup {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.card-progress-popup {
+    background: var(--bg);
+    padding: 14px;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.progress-info-popup {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+}
+
+.progress-info-popup .percent-value {
+    color: var(--success);
+    font-weight: 800;
+}
+
+.progress-bar-popup {
+    height: 8px;
+    background: var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.progress-fill-popup {
+    height: 100%;
+    background: linear-gradient(90deg, var(--success), #34d399);
+    border-radius: 4px;
+    transition: width 1s ease-out;
+}
+
+.card-footer-popup {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 4px;
+    padding-top: 12px;
+    border-top: 1px dashed var(--border);
+}
+
+.footer-info {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.footer-info .material-icons {
+    font-size: 16px;
+}
+
+.footer-info.highlight {
+    color: var(--primary);
+}
+
+/* Animations */
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .panel-main-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 20px;
+        padding: 1.5rem;
+    }
+
+    .panel-stats-summary {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .stat-badge {
+        flex: 1;
+        justify-content: center;
+    }
+
+    .panel-container {
+        grid-template-columns: 1fr;
+    }
+
+    .popup-header-stats {
+        grid-template-columns: 1fr;
+    }
+
+    .popup-companies-grid {
+        grid-template-columns: 1fr;
+    }
+}

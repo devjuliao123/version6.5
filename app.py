@@ -185,7 +185,7 @@ async def logout():
 # =============================
 # CONFIGURAÇÃO GOOGLE SHEETS
 # =============================
-SHEET_NAME = "OrganizacoesMigradas"
+SHEET_NAME = "FiliaisImplantadas"
 WORKSHEET_NAME = "Principal"
 CREDENTIAL_FILE = "organizacoescloud.json"
 DATA_FILE = "dados/implantacoes.json"

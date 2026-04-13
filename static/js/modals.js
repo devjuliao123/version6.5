@@ -34,7 +34,25 @@ function criarModal() {
 
 
 function abrirModal(observacoes, dadosRegistro) {
+    // Restaurar título padrão caso tenha sido alterado pelo painel
+    const modalHeaderH3 = document.querySelector('#observacoesModal h3');
+    if (modalHeaderH3) {
+        modalHeaderH3.innerHTML = '<span class="material-icons">info</span> Detalhes do Registro';
+    }
+
+    // Se dadosRegistro for uma string (JSON), parsear.
+    if (typeof dadosRegistro === 'string') {
+        try {
+            dadosRegistro = JSON.parse(dadosRegistro);
+        } catch (e) {
+            console.error("Erro ao parsear dadosRegistro:", e);
+        }
+    }
+
     const modal = document.getElementById('observacoesModal');
+    const modalContent = modal.querySelector('.modal-content');
+    if (modalContent) modalContent.classList.remove('modal-painel');
+
     const modalBody = modal.querySelector('.modal-body');
     const isImplRole = (typeof isAnonymized === 'function') ? isAnonymized() : false;
 
@@ -206,6 +224,9 @@ function abrirModal(observacoes, dadosRegistro) {
 
 function criarModalMelhorado(titulo, icone, cor, dados, config) {
     const modal = document.getElementById('observacoesModal');
+    const modalContent = modal.querySelector('.modal-content');
+    if (modalContent) modalContent.classList.remove('modal-painel');
+
     const modalBody = modal.querySelector('.modal-body');
 
     // Para o modal de valor, usar busca estrita em certas tags e incluir tags virtuais (ERP/AGREGADO)

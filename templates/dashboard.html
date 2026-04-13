@@ -25,6 +25,7 @@
     <link rel="stylesheet" href="/static/css/charts.css">
     <link rel="stylesheet" href="/static/css/modals.css">
     <link rel="stylesheet" href="/static/css/notification.css">
+    <link rel="stylesheet" href="/static/css/painel.css">
     <link rel="stylesheet" href="/static/css/responsive.css">
     
     <title>Gestor de Implantações | Dashboard</title>
@@ -46,6 +47,11 @@
         </div>
 
         <div class="header-right">
+            <button id="painelInformativoBtn" class="action-btn primary" title="Painel Informativo">
+                <span class="material-icons">rocket_launch</span>
+                <span>Painel Informativo</span>
+            </button>
+
             <button id="refreshBtn" class="action-btn" title="Recarregar dados (Ctrl+R)">
                 <span class="material-icons">refresh</span>
                 <span>Recarregar</span>
@@ -154,8 +160,9 @@
             <div class="loading-text">Carregando dados...</div>
         </div>
         
-        <!-- KPI Cards -->
-        <section class="kpi-section">
+        <div id="dashboard-view">
+            <!-- KPI Cards -->
+            <section class="kpi-section">
             <div class="kpi-card glass" id="valorTotalCard" style="cursor: pointer;">
                 <span class="material-icons kpi-icon">payments</span>
                 <div class="kpi-content">
@@ -329,13 +336,18 @@
                 </div>
             </div>
             
-            <div class="chart-box glass etl-box">
-                <h3><span class="material-icons etl-icon">history</span> Histórico Importado</h3>
-                <div class="chart-container">
-                    <canvas id="etlHistoricoChart"></canvas>
+                <div class="chart-box glass etl-box">
+                    <h3><span class="material-icons etl-icon">history</span> Histórico Importado</h3>
+                    <div class="chart-container">
+                        <canvas id="etlHistoricoChart"></canvas>
+                    </div>
                 </div>
-            </div>
-        </section>
+            </section>
+        </div>
+
+        <div id="painel-informativo-view" style="display: none;">
+            <!-- Painel Informativo será injetado aqui via JS -->
+        </div>
     </main>
     
     <!-- Modal -->
@@ -369,6 +381,7 @@
     <script src="/static/js/table.js"></script>
     <script src="/static/js/modals.js"></script>
     <script src="/static/js/theme.js"></script>
+    <script src="/static/js/painelImplantacao.js"></script>
     <script src="/static/js/main.js"></script>
     <script src="/static/js/user.js"></script>
     
